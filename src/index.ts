@@ -10,6 +10,7 @@ import connectRedis from "connect-redis";
 import { redis } from "./redis";
 import cors from "cors";
 import { MeResolver } from "./modules/user/Me";
+import { ConfirmUserResolver } from "./modules/user/ConfirmUser";
 
 declare module "express-session" {
   export interface SessionData {
@@ -23,7 +24,12 @@ const main = async () => {
   const RedisStore = connectRedis(session);
 
   const schema = await buildSchema({
-    resolvers: [MeResolver, RegisterResolver, LoginResolver],
+    resolvers: [
+      MeResolver,
+      RegisterResolver,
+      LoginResolver,
+      ConfirmUserResolver,
+    ],
     authChecker: ({ context: { req } }) => {
       // here we can read the user from context
       // and check his permission in the db against the `roles` argument
