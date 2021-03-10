@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 
 export interface MyContext {
   req: Request & {
@@ -6,4 +6,5 @@ export interface MyContext {
       userId?: any;
     };
   };
+  res: Response;
 }

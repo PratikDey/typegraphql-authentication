@@ -3,14 +3,10 @@ import "reflect-metadata";
 import Express from "express";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { RegisterResolver } from "./modules/user/Register";
-import { LoginResolver } from "./modules/user/Login";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { redis } from "./redis";
 import cors from "cors";
-import { MeResolver } from "./modules/user/Me";
-import { ConfirmUserResolver } from "./modules/user/ConfirmUser";
 
 declare module "express-session" {
   export interface SessionData {
@@ -24,12 +20,7 @@ const main = async () => {
   const RedisStore = connectRedis(session);
 
   const schema = await buildSchema({
-    resolvers: [
-      MeResolver,
-      RegisterResolver,
-      LoginResolver,
-      ConfirmUserResolver,
-    ],
+    resolvers: [__dirname + "/modules/**/*.ts"],
     authChecker: ({ context: { req } }) => {
       // here we can read the user from context
       // and check his permission in the db against the `roles` argument
@@ -44,7 +35,7 @@ const main = async () => {
   });
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req }: any) => ({ req }),
+    context: ({ req, res }: any) => ({ req, res }),
   });
 
   const app = Express();
