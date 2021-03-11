@@ -1,5 +1,5 @@
 import { User } from "../../entity/User";
-import { sendEmail } from "../../utils/sendEmail";
+import { sendEmail } from "../utils/sendEmail";
 import { Arg, Mutation, Resolver } from "type-graphql";
 import { v4 } from "uuid";
 import { redis } from "../../redis";

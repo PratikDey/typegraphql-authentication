@@ -1,12 +1,12 @@
 import { ApolloServer } from "apollo-server-express";
 import "reflect-metadata";
 import Express from "express";
-import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { redis } from "./redis";
 import cors from "cors";
+import { createSchema } from "./utils/createSchema";
 
 declare module "express-session" {
   export interface SessionData {
@@ -19,20 +19,8 @@ const main = async () => {
 
   const RedisStore = connectRedis(session);
 
-  const schema = await buildSchema({
-    resolvers: [__dirname + "/modules/**/*.ts"],
-    authChecker: ({ context: { req } }) => {
-      // here we can read the user from context
-      // and check his permission in the db against the `roles` argument
-      // that comes from the `@Authorized` decorator, eg. ["ADMIN", "MODERATOR"]
+  const schema = await createSchema();
 
-      if (req.session.userId) {
-        return true;
-      }
-
-      return false; // or false if access is denied
-    },
-  });
   const apolloServer = new ApolloServer({
     schema,
     context: ({ req, res }: any) => ({ req, res }),
